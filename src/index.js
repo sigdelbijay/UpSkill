@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Switch, Route, withRouter } from "react-router
 import firebase from './firebase'
 import Login from './Components/Auth/Login'
 import Register from './Components/Auth/Register'
+import TestLayout from './Components/Test/TestLayout'
 
 //redux for storing data globally
 import { createStore } from 'redux'
@@ -26,13 +27,6 @@ class Root extends React.Component {
         console.log(user)
         this.props.setUser(user)
         this.props.history.push("/")
-        // firebase.database().ref('users').child(user.uid).once('value', snap => {
-        //   const res = snap.val()
-        //   console.log("res", res)
-        //   user.role = res.role
-        //   this.props.setUser(user)
-        //   this.props.history.push("/")
-        // })
       } else {
         this.props.history.push("/login")
         this.props.clearUser()
@@ -45,6 +39,7 @@ class Root extends React.Component {
           <Route exact path="/" component={App} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
+          <Route path="/test" component={TestLayout} />
         </Switch>
     )
   }
