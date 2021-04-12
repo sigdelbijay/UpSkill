@@ -1,20 +1,22 @@
 import React from 'react'
-import { Dropdown, Segment, Header, Icon, Image, Button, Input } from 'semantic-ui-react'
+import { Dropdown, Segment, Header, Icon, Image, Button, Input, Menu, Visibility } from 'semantic-ui-react'
 import firebase from '../../firebase'
 import AddVideoModal from './AddVideoModal'
-import { Link } from 'react-router-dom'
 import SearchVideo from './SearchVideo'
+import { Link } from 'react-router-dom'
 
 class UserPanel extends React.Component {
 
   state = {
-    modal: false
+    modal: false,
+    activeItem: '',
+    topPassed: false
   }
 
-  dropdownOptions = () => [
+  dropdownOptions = (user) => [
     {
       key: "user",
-      text: <span>Signed in as <strong>{this.props.user && this.props.user.displayName}</strong></span>,
+      text: <span>Signed in as <strong>{user && user.displayName}</strong></span>,
       disabled: true
     },
     {
@@ -35,40 +37,49 @@ class UserPanel extends React.Component {
   }
 
   openModal = () => this.setState({ modal: true })
-  closeModal = () => this.setState({modal: false})
-
+  closeModal = () => this.setState({ modal: false })
+  topPassed = () => this.setState({ topPassed: true })
+  topPassedReverse = () => this.setState({topPassed: false})
+  
   render() {
-    const { user } = this.props
-    const {modal} = this.state
+    const { user, videos } = this.props
+    const { modal, activeItem, topPassed } = this.state
+    console.log("topPassed", topPassed)
+    
     return (
-      <React.Fragment>
-        <Header as='h2' floated='left'>
-          <Icon name="puzzle piece" color="orange" />
-            UpSkill
-        </Header>
-        <Header as="h4" floated="right">
-          {/* <Link to="/test">test</Link> */}
-          {" "}
-          <Input action={{ icon: 'search'}} size='small' placeholder='Search...' />
-          {/* <SearchVideo videos={user.videos}/> */}
-          {" "}
-          {user.role === "tutor" ? <Button negative onClick={() => alert('going live')}>Go live!</Button> : ""}
-          {" "}
-          {user.role === "tutor" ? <Button positive onClick={this.openModal}>Add Video</Button> : ""}
-          {user.role === "user" ? <Button>Favourites</Button> : ""}
-          {" "}
-          <Dropdown direction="left"
-            trigger={
-              <span>
-                <Image src={user.photoURL} spaced="right" avatar/>
-                {user && user.displayName}
-              </span>
-            }
-            options = {this.dropdownOptions()}
-          />
+      <Visibility once={false} onTopPassed={this.topPassed} onTopPassedReverse={this.topPassedReverse}>
+        <Menu secondary={!topPassed} fixed='top' inverted={topPassed}>
+          <Menu.Item header position='left'>
+            <Link to="/">
+              <Menu.Header as='h2' floated='left'>
+                <Icon name="puzzle piece" color="orange" size='large'/>
+                  UpSkill
+              </Menu.Header>
+            </Link>
+          </Menu.Item>
+
+          <Menu.Menu position='right'>
+            <Menu.Item>
+              <SearchVideo videos={videos} />
+            </Menu.Item>
+            {user.role === "tutor" ? <Menu.Item onClick={() => alert('going live')}>Go live!</Menu.Item> : ""}
+            {user.role === "tutor" ? <Menu.Item onClick={this.openModal}>Add Video</Menu.Item> : ""}
+            {user.role === "user" ? <Menu.Item>Favourites</Menu.Item> : ""}
+            <Menu.Item>
+              <Dropdown direction="left"
+                trigger={
+                  <span>
+                    <Image src={user.photoURL} spaced="right" avatar/>
+                    {user && user.displayName}
+                  </span>
+                }
+                options = {this.dropdownOptions(user)}
+              />
+          </Menu.Item>
           <AddVideoModal open={modal} closeModal={this.closeModal} user={user}/>
-        </Header>
-      </React.Fragment>     
+          </Menu.Menu>
+        </Menu>
+      </Visibility>
     )
   }
 }

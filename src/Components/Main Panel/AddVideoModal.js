@@ -26,23 +26,22 @@ class AddVideoModal extends React.Component {
   addVideo = () => {
     const { videoTitle, videoLink, videoRefs, videoTopic } = this.state
     const {closeModal, user} = this.props
-    const key = videoRefs.push().key
   
     const newVideo = {
-      id: key,
+      id: videoLink.split('v=').pop().split('&')[0],
       videoTitle,
       videoLink,
       videoTopic,
       uploadedBy: {
         name: user.displayName,
-        avatar: user.photoUrl
+        avatar: user.photoURL
       },
       uploadedOn: firebase.database.ServerValue.TIMESTAMP,
       views: 0
     }
   
     videoRefs
-      .child(key)
+      .child(newVideo.id)
       .update(newVideo)
       .then(() => {
         this.setState({ videoTitle: '', videoLink: '', videoTopic: '' })

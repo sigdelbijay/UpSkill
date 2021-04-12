@@ -24,8 +24,30 @@ const user_reducer = (state = initialUserState, action) => {
   }
 }
 
+const initialVideosState = {
+  videosList: null
+}
+
+const videos_reducer = (state = initialVideosState, action) => {
+  switch (action.type) {
+    case actionTypes.SET_VIDEOS:
+      return {
+        videosList: action.payload.videos
+      }
+    
+    case actionTypes.CLEAR_VIDEOS:
+      return {
+        ...state
+      }
+    
+    default:
+      return state;
+  }
+}
+
 const rootReducer = combineReducers({
-  user: user_reducer
+  user: user_reducer,
+  videos: videos_reducer
 })
 
 export default rootReducer

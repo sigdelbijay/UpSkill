@@ -8,6 +8,7 @@ import firebase from './firebase'
 import Login from './Components/Auth/Login'
 import Register from './Components/Auth/Register'
 import TestLayout from './Components/Test/TestLayout'
+import PlayVideo from './Components/Main Panel/PlayVideo'
 
 //redux for storing data globally
 import { createStore } from 'redux'
@@ -34,23 +35,24 @@ class Root extends React.Component {
     })
   }
   render() {
-    return this.props.isLoading ? <Spinner /> : (
+    return this.props.isLoading ? <Spinner spinnerLabel="Preparing Dashborad..."/> : (
         <Switch>
           <Route exact path="/" component={App} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
           <Route path="/test" component={TestLayout} />
+          <Route path="/video/:id" component={PlayVideo} />
         </Switch>
     )
   }
 }
-const mapStateFromProps = state => ({
+const mapStateToProps = state => ({
   isLoading: state.user.isLoading
 })
 
 const RootWithAuth = withRouter(
   connect(
-    mapStateFromProps,
+    mapStateToProps,
     { setUser, clearUser }
   )(Root)
 )

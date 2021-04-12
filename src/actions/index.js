@@ -15,3 +15,19 @@ export const clearUser = () => {
     type: actionTypes.CLEAR_USER
   }
 }
+
+//Video Actions
+export const setVideos = videos => {
+  return {
+    type: actionTypes.SET_VIDEOS,
+    payload: {
+      videos: videos
+    }
+  }
+}
+
+export const clearVideos = () => {
+  return {
+    type: actionTypes.CLEAR_VIDEOS
+  }
+}
