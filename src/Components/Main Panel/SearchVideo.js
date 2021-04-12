@@ -20,7 +20,7 @@ const getResults = (videos) => {
   for (let topic of topics) {
     results[topic] = {
       name: topic,
-      results: Object.values(videos).filter(video => video.videoTopic === topic).map(video => ({
+      results: Object.values(videos).filter(video => video.videoTopic.toLowerCase() === topic).map(video => ({
         title: video.videoTitle,
         description: `Uploaded by: ${video.uploadedBy.name}`,
         image: `http://img.youtube.com/vi/${video.videoLink.split('v=').pop().split('&')[0]}/0.jpg`,
@@ -34,8 +34,8 @@ const getResults = (videos) => {
 const getTopics = (videos) => {
   const topics = []
   for (let video of Object.values(videos)) {
-    if (topics.indexOf(video.videoTopic) === -1) {
-      topics.push(video.videoTopic)
+    if (topics.indexOf(video.videoTopic.toLowerCase()) === -1) {
+      topics.push(video.videoTopic.toLowerCase())
     }
   }
   return topics
