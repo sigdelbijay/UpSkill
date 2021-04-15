@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactPlayer from 'react-player'
-import { Segment, Grid, Divider } from 'semantic-ui-react'
+import { Segment, Grid, Divider, Card, Header, Label } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import Spinner from '../../Spinner'
 import UserPanel from './UserPanel'
@@ -42,7 +42,21 @@ class PlayVideo extends React.Component {
                     height='100%'
                     url={currentVideo.videoLink}
                     onClickPreview={() => this.addViewCount(currentVideo)}
-                  />
+                />
+
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row columns={1} >
+              <Grid.Column >
+              <Card.Content>
+                  <Card.Header ><Header>{currentVideo.videoTitle}</Header></Card.Header>
+                  <Card.Meta>
+                  <Label as='a' image>
+                    <img src={currentVideo.uploadedBy.avatar} />
+                    {currentVideo.uploadedBy.name}
+                  </Label>
+                  </Card.Meta>
+                </Card.Content>
               </Grid.Column>
             </Grid.Row>
 

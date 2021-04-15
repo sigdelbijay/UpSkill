@@ -19,7 +19,16 @@ class Comments extends React.Component {
   componentDidMount() {
     const { currentVideo, user } = this.state
     if (currentVideo && user) {
+      console.log("addCommentsListeners called from componentDidMount")
       this.addCommentsListeners(currentVideo.id)
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log(prevProps.currentVideo, this.props.currentVideo)
+    if (prevProps.currentVideo !== this.props.currentVideo) {
+      console.log("addCommentsListeners called from componentDidUpdate")
+      this.addCommentsListeners(this.props.currentVideo.id)
     }
   }
 
