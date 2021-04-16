@@ -7,7 +7,7 @@ import SingleComment from './SingleComment'
 class Comments extends React.Component {
   state = {
     commentsRef: firebase.database().ref("comments"),
-    currentVideo: this.props.currentVideo,
+    currentVideoId: this.props.currentVideoId,
     user: this.props.user,
     comments: [],
     comment: '',
@@ -17,24 +17,22 @@ class Comments extends React.Component {
   }
 
   componentDidMount() {
-    const { currentVideo, user } = this.state
-    if (currentVideo && user) {
-      console.log("addCommentsListeners called from componentDidMount")
-      this.addCommentsListeners(currentVideo.id)
+    const { currentVideoId, user } = this.state
+    if (currentVideoId && user) {
+      this.addCommentsListeners(currentVideoId)
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    console.log(prevProps.currentVideo, this.props.currentVideo)
-    if (prevProps.currentVideo !== this.props.currentVideo) {
-      console.log("addCommentsListeners called from componentDidUpdate")
-      this.addCommentsListeners(this.props.currentVideo.id)
+  componentDidUpdate(prevProps) {
+    if (prevProps.currentVideoId !== this.props.currentVideoId) { //prevProps.currentVideo || this.state.currentVideo
+      this.setState({currentVideoId: this.props.currentVideoId})
+      this.addCommentsListeners(this.props.currentVideoId)
     }
   }
 
   addCommentsListeners = videoId => {
     let loadedComments = []
-    this.state.commentsRef.child(videoId).on('child_added', snap => {
+    this.state.commentsRef.child(videoId).on('value', snap => {
       loadedComments.push(snap.val())
       this.setState({
         comments: loadedComments,
@@ -56,18 +54,12 @@ class Comments extends React.Component {
     return comment
   }
 
-  displayComments = comments => (
-    comments.length > 0 && comments.map(comment => (
-      <SingleComment comment={comment} user={this.state.user} key={comment.timestamp}/>
-    ))
-  )
-
   addComment = () => {
-    const { comment, currentVideo, commentsRef } = this.state
+    const { comment, currentVideoId, commentsRef } = this.state
     if (comment) {
       this.setState({ commentLoading: true })
       commentsRef
-        .child(currentVideo.id)
+        .child(currentVideoId)
         .push()
         .set(this.createComment())
         .then(() => {
@@ -89,10 +81,16 @@ class Comments extends React.Component {
     }
   }
 
-  handleChange = (e) => this.setState({comment: e.target.value})
+  handleChange = (e) => this.setState({ comment: e.target.value })
+  
+  displayComments = comments => {
+    return comments.length > 0 && comments[0] !== null && Object.values(comments[0]).map(comment => {
+      return comment !== null && <SingleComment comment={comment} user={this.state.user} key={comment.timestamp}/>
+    })
+  }
 
   render() {
-    const { currentVideo, user, comments, comment } = this.state
+    const { comments, comment } = this.state
     return (
       <React.Fragment>
         <Comment.Group threaded>

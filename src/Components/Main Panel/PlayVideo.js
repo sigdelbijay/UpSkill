@@ -9,14 +9,32 @@ import Comments from '../Comments/Comments'
 class PlayVideo extends React.Component {
   state = {
     user: this.props.currentUser,
-    videos: this.props.videos
+    videos: this.props.videos,
+    currentVideoId: this.props.match.params.id,
+    currentVideo: {}
+  }
+
+  componentDidMount() {
+    const { videos, currentVideoId } = this.state
+    if (videos && currentVideoId) {
+      this.setState({currentVideo: this.getCurrentVideo(videos, currentVideoId)[0]})
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps === undefined) return false
+    if (this.state.currentVideoId !== this.props.match.params.id) {
+      this.setState({
+        currentVideoId: this.props.match.params.id,
+        currentVideo: this.getCurrentVideo(this.state.videos, this.props.match.params.id)[0]
+      })
+    }
   }
   
-  getCurrentVideo = videos => Object.values(videos).filter(video => video.id === this.props.match.params.id)
+  getCurrentVideo = (videos, currentVideoId) => Object.values(videos).filter(video => video.id === currentVideoId)
 
   render() {
-    const { user, videos } = this.state
-    const currentVideo = this.getCurrentVideo(videos)[0]
+    const { user, videos, currentVideo, currentVideoId } = this.state
 
     return Object.keys(currentVideo).length === 0 ? <Spinner spinnerLabel="Loading Video..." /> : (
       <React.Fragment>
@@ -62,7 +80,7 @@ class PlayVideo extends React.Component {
 
             <Grid.Row columns={1} >
               <Grid.Column >
-                <Comments user={user} currentVideo={currentVideo} />
+                <Comments user={user} currentVideoId={currentVideoId} />
               </Grid.Column>
             </Grid.Row>
           </Grid>
