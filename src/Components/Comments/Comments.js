@@ -84,7 +84,9 @@ class Comments extends React.Component {
   handleChange = (e) => this.setState({ comment: e.target.value })
   
   displayComments = comments => {
-    return comments.length > 0 && comments[0] !== null && Object.values(comments[0]).map(comment => {
+    //firebase returns if no comments are found and returns an extra array for every new child added
+    //so better to take the last array
+    return comments.length > 0 && comments[0] !== null && Object.values(comments[comments.length - 1]).map(comment => {
       return comment !== null && <SingleComment comment={comment} user={this.state.user} key={comment.timestamp}/>
     })
   }

@@ -5,13 +5,15 @@ import { connect } from 'react-redux'
 import Spinner from '../../Spinner'
 import UserPanel from './UserPanel'
 import Comments from '../Comments/Comments'
+import firebase from '../../firebase'
 
 class PlayVideo extends React.Component {
   state = {
     user: this.props.currentUser,
     videos: this.props.videos,
     currentVideoId: this.props.match.params.id,
-    currentVideo: {}
+    currentVideo: {},
+    videoRefs: firebase.database().ref('videos')
   }
 
   componentDidMount() {
@@ -30,8 +32,17 @@ class PlayVideo extends React.Component {
       })
     }
   }
+
+  // OR adding key in SearchVideo which will trigger the react component to remount
+  // <Route path="/page/:pageid" render={(props) => (
+  //   <Page key={props.match.params.pageid} {...props} />)
+  // } />
   
   getCurrentVideo = (videos, currentVideoId) => Object.values(videos).filter(video => video.id === currentVideoId)
+
+  addViewCount(video) {
+    this.state.videosRef.child(video.id).set({...video, views: video.views+1})
+  }
 
   render() {
     const { user, videos, currentVideo, currentVideoId } = this.state

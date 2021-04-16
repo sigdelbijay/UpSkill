@@ -21,14 +21,6 @@ class App extends React.Component {
     videosRef: firebase.database().ref('videos')
   }
 
-  // state = {
-  //   displayName: this.props.currentUser.displayName,
-  //   photoUrl: this.props.currentUser.photoURL,
-  //   role: '',
-  //   videos: [],
-  //   videosRef: firebase.database().ref('videos')
-  // }
-
   componentDidMount() {
     firebase.database().ref('users')
       .child(this.state.user.uid).once('value').then(snap => snap.val())
