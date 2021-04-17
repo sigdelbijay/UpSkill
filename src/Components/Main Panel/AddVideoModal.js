@@ -33,8 +33,8 @@ class AddVideoModal extends React.Component {
       videoLink,
       videoTopic,
       uploadedBy: {
-        name: user.displayName,
-        avatar: user.photoURL
+        name: user.name,
+        avatar: user.avatar
       },
       uploadedOn: firebase.database.ServerValue.TIMESTAMP,
       views: 0

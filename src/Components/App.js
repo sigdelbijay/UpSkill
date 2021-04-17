@@ -13,36 +13,37 @@ class App extends React.Component {
   state = {
     user: {
       uid: this.props.currentUser.uid,
-      displayName: this.props.currentUser.displayName,
-      photoURL: this.props.currentUser.photoURL,
-      role: ''
+      name: this.props.currentUser.displayName || this.props.currentUser.name,
+      avatar: this.props.currentUser.photoURL || this.props.currentUser.avatar,
+      role: this.props.currentUser.role || ''
     },
-    videos: [],
+    videos: this.props.videos || [],
     videosRef: firebase.database().ref('videos')
   }
 
   componentDidMount() {
-    firebase.database().ref('users')
-      .child(this.state.user.uid).once('value').then(snap => snap.val())
+    const {user, videos, videosRef} = this.state
+    if (!user.role) {
+
+      firebase.database().ref('users')
+      .child(user.uid).once('value').then(snap => snap.val())
       .then(val => {
-        this.setState({ user: { ...this.state.user, role: val.role } })
-        this.props.setUser({ ...this.state.user, role: val.role })
+        this.setState({ user: { ...user, role: val.role } })
+        this.props.setUser({ ...user, role: val.role })
       })
       .catch(err => {
         console.log(err)
       })
-    // .then(val => this.setState({ role: val.role }))
-  
-    this.state.videosRef.once('value').then(snap => snap.val())
+    }
+
+    if (videos.length === 0) {
+      videosRef.once('value').then(snap => snap.val())
       .then(val => {
         this.setState({ videos: val })
         this.props.setVideos(val)
       })
+    }
   }
-
-  // addViewCount(video) {
-  //   this.state.videosRef.child(video.id).set({...video, views: video.views+1})
-  // }
   
   render() {
     const { user, videos } = this.state
@@ -66,9 +67,6 @@ class App extends React.Component {
               <Grid.Row columns={3}>
                 {videos && Object.values(videos).slice(0,3).map((video, i) => (
                   <Grid.Column key={video.id}>
-                    {/* <ReactPlayer controls width="95%" height="95%" controls
-                      url={video.videoLink}  onClickPreview={() => this.addViewCount(video)} /> */}
-
                     <Link to={`/video/${video.id}`}>
                       <Image
                         src={`http://img.youtube.com/vi/${video.videoLink.split('v=').pop().split('&')[0]}/0.jpg`}
@@ -97,8 +95,6 @@ class App extends React.Component {
               {videos && Object.values(videos)
                 .sort((a, b) => b.views - a.views).slice(0, 3).map((video, i) => (
                   <Grid.Column key={video.id}>
-                    {/* <ReactPlayer controls width="95%" height="95%" controls
-                      url={video.videoLink} onStart={() => this.addViewCount(video)} /> */}
                     <Link to={`/video/${video.id}`}>
                       <Image
                         src={`http://img.youtube.com/vi/${video.videoLink.split('v=').pop().split('&')[0]}/0.jpg`}
@@ -127,8 +123,6 @@ class App extends React.Component {
               {videos && Object.values(videos)
                 .sort((a, b) => a.uploadedOn - b.uploadedOn).slice(0, 3).map((video, i) => (
                   <Grid.Column key={video.id}>
-                    {/* <ReactPlayer controls width="95%" height="95%" controls
-                      url={video.videoLink} onStart={() => this.addViewCount(video)} /> */}
                     <Link to={`/video/${video.id}`}>
                       <Image
                         src={`http://img.youtube.com/vi/${video.videoLink.split('v=').pop().split('&')[0]}/0.jpg`}

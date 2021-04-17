@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactPlayer from 'react-player'
-import { Segment, Grid, Divider, Card, Header, Label } from 'semantic-ui-react'
+import { Segment, Grid, Divider, Card, Header, Label, Icon } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import Spinner from '../../Spinner'
 import UserPanel from './UserPanel'
@@ -13,7 +13,8 @@ class PlayVideo extends React.Component {
     videos: this.props.videos,
     currentVideoId: this.props.match.params.id,
     currentVideo: {},
-    videoRefs: firebase.database().ref('videos')
+    videosRefs: firebase.database().ref('videos'),
+    usersRefs: firebase.database().ref('users')
   }
 
   componentDidMount() {
@@ -42,6 +43,11 @@ class PlayVideo extends React.Component {
 
   addViewCount(video) {
     this.state.videosRef.child(video.id).set({...video, views: video.views+1})
+  }
+
+  addToFavorite = () => {
+    const { usersRef, user } = this.state
+    usersRef.child(user).set({...user})
   }
 
   render() {
@@ -78,7 +84,13 @@ class PlayVideo extends React.Component {
             <Grid.Row columns={1} >
               <Grid.Column >
               <Card.Content>
-                  <Card.Header ><Header>{currentVideo.videoTitle}</Header></Card.Header>
+                  <Card.Header >
+                    <Header as='h2' position='left'>
+                      {currentVideo.videoTitle} {" "}
+                      <Icon inverted link name='like' size='tiny'
+                        color='grey' floated='right' onClick={() => this.addToFavorite(currentVideoId)}/>
+                    </Header>
+                  </Card.Header>
                   <Card.Meta>
                   <Label as='a' image>
                     <img src={currentVideo.uploadedBy.avatar} />

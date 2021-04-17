@@ -16,7 +16,7 @@ class UserPanel extends React.Component {
   dropdownOptions = (user) => [
     {
       key: "user",
-      text: <span>Signed in as <strong>{user && user.displayName}</strong></span>,
+      text: <span>Signed in as <strong>{user && user.name}</strong></span>,
       disabled: true
     },
     {
@@ -69,8 +69,8 @@ class UserPanel extends React.Component {
               <Dropdown direction="left"
                 trigger={
                   <span>
-                    <Image src={user.photoURL} spaced="right" avatar/>
-                    {user && user.displayName}
+                    <Image src={user.avatar} spaced="right" avatar/>
+                    {user && user.name}
                   </span>
                 }
                 options = {this.dropdownOptions(user)}

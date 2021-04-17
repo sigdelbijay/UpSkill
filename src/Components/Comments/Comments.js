@@ -46,8 +46,8 @@ class Comments extends React.Component {
       timestamp: firebase.database.ServerValue.TIMESTAMP,
       user: {
         id: this.state.user.uid,
-        name: this.state.user.displayName,
-        avatar: this.state.user.photoURL
+        name: this.state.user.name,
+        avatar: this.state.user.avatar
       },
       comment: this.state.comment
     }
