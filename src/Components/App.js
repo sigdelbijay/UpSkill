@@ -19,7 +19,8 @@ class App extends React.Component {
       favourites: this.props.currentUser.favourites || []
     },
     videos: this.props.videos || [],
-    videosRef: firebase.database().ref('videos')
+    videosRef: firebase.database().ref('videos'),
+    showFavourites: false
   }
 
   componentDidMount() {
@@ -28,9 +29,10 @@ class App extends React.Component {
 
       firebase.database().ref('users')
       .child(user.uid).once('value').then(snap => snap.val())
-      .then(val => {
-        this.setState({ user: { ...user, role: val.role, favourites: val.favourites || [] } })
-        this.props.setUser({ ...user, role: val.role, favourites: val.favourites || [] })
+        .then(val => {
+        console.log("val", val)
+        this.setState({ user: { ...user, role: val.role, favourites: val.favourites ? Object.values(val.favourites) : [] } })
+        this.props.setUser({ ...user, role: val.role, favourites: val.favourites ? Object.values(val.favourites) : [] })
       })
       .catch(err => {
         console.log(err)
@@ -45,22 +47,54 @@ class App extends React.Component {
       })
     }
   }
+
+  showFavouritesFn = () => {
+    console.log("clicked")
+    this.setState({ showFavourites: !this.state.showFavourites })
+  }
   
   render() {
-    const { user, videos } = this.state
+    const { user, videos, favourites, showFavourites } = this.state
+    console.log("showFavourites", showFavourites)
     return (
       <React.Fragment>
         <Segment basic style={{padding: '1em 0em' }}>
           <Grid>
             <Grid.Row columns={1}>
               <Grid.Column>
-                <UserPanel user={user} videos={videos} />
+                <UserPanel user={user} videos={videos} showFavouritesFn={this.showFavouritesFn}/>
               </Grid.Column>
             </Grid.Row>
           </Grid>
         </Segment>
-
+        
         <Divider hidden/>
+        {showFavourites &&
+          <Segment vertical>
+            <Header>Favourites</Header>
+            <Grid>
+              <Grid.Row columns={3}>
+                {videos && Object.values(videos).filter(video => user.favourites.includes(video.id)).slice(0,3).map((video, i) => (
+                  <Grid.Column key={video.id}>
+                    <Link to={`/video/${video.id}`}>
+                      <Image
+                        src={`http://img.youtube.com/vi/${video.videoLink.split('v=').pop().split('&')[0]}/0.jpg`}
+                        width="95%" height="70%"
+                      />
+                    </Link>
+                    <Card.Content>
+                      <Card.Header ><Header>{video.videoTitle}</Header></Card.Header>
+                      <Card.Meta>
+                        <span className='date'>Uploaded by {video.uploadedBy.name}</span>
+                      </Card.Meta>
+                      <Label>{video.videoTopic || 'topic'}</Label>
+                    </Card.Content>
+                  </Grid.Column>
+                ))}
+              </Grid.Row>
+            </Grid>
+          </Segment>}
+        
         <Segment vertical>
           <Header>Videos</Header>
           <Grid>

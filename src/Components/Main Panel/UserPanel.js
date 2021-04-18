@@ -39,12 +39,11 @@ class UserPanel extends React.Component {
   openModal = () => this.setState({ modal: true })
   closeModal = () => this.setState({ modal: false })
   topPassed = () => this.setState({ topPassed: true })
-  topPassedReverse = () => this.setState({topPassed: false})
+  topPassedReverse = () => this.setState({ topPassed: false })
   
   render() {
-    const { user, videos } = this.props
+    const { user, videos, showFavouritesFn } = this.props
     const { modal, activeItem, topPassed } = this.state
-    console.log("topPassed", topPassed)
     
     return (
       <Visibility once={false} onTopPassed={this.topPassed} onTopPassedReverse={this.topPassedReverse}>
@@ -64,7 +63,7 @@ class UserPanel extends React.Component {
             </Menu.Item>
             {user.role === "tutor" ? <Menu.Item onClick={() => alert('going live')}>Go live!</Menu.Item> : ""}
             {user.role === "tutor" ? <Menu.Item onClick={this.openModal}>Add Video</Menu.Item> : ""}
-            {user.role === "user" ? <Menu.Item>Favourites</Menu.Item> : ""}
+            {user.role === "user" ? <Menu.Item as='a' onClick={showFavouritesFn}>Favourites</Menu.Item> : ""}
             <Menu.Item>
               <Dropdown direction="left"
                 trigger={

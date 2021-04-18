@@ -43,7 +43,10 @@ class PlayVideo extends React.Component {
   //   <Page key={props.match.params.pageid} {...props} />)
   // } />
 
-  checkFavourite = (videos, currentVideoId) => (videos[currentVideoId]) && this.setState({isAFavourite: true})
+  checkFavourite = (videos, currentVideoId) => {
+    if (this.state.user.favourites.includes(videos[currentVideoId]))
+      this.setState({ isAFavourite: true })
+  }
   getCurrentVideo = (videos, currentVideoId) => Object.values(videos).filter(video => video.id === currentVideoId)
   addViewCount = (video) => this.state.videosRef.child(video.id).set({...video, views: video.views+1})
 
