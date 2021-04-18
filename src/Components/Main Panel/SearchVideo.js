@@ -67,7 +67,7 @@ class SearchExampleCategory extends Component {
   state = initialState
 
   handleResultSelect = (e, { result }) => {
-    this.setState({ value: result.title })
+    // this.setState({ value: result.title })
     this.props.history.push(`/video/${result.id}`)
   }
 

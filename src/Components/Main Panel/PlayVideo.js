@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactPlayer from 'react-player'
-import { Segment, Grid, Divider, Card, Header, Label, Icon } from 'semantic-ui-react'
+import { Segment, Grid, Divider, Card, Header, Label, Icon, Message, Image } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import Spinner from '../../Spinner'
 import UserPanel from './UserPanel'
@@ -13,8 +13,11 @@ class PlayVideo extends React.Component {
     videos: this.props.videos,
     currentVideoId: this.props.match.params.id,
     currentVideo: {},
-    videosRefs: firebase.database().ref('videos'),
-    usersRefs: firebase.database().ref('users')
+    isAFavourite: false,
+    isAFavouriteLoading: false,
+    message: '',
+    videosRef: firebase.database().ref('videos'),
+    usersRef: firebase.database().ref('users')
   }
 
   componentDidMount() {
@@ -22,6 +25,7 @@ class PlayVideo extends React.Component {
     if (videos && currentVideoId) {
       this.setState({currentVideo: this.getCurrentVideo(videos, currentVideoId)[0]})
     }
+    this.checkFavourite(videos, currentVideoId)
   }
 
   componentDidUpdate(prevProps) {
@@ -38,21 +42,43 @@ class PlayVideo extends React.Component {
   // <Route path="/page/:pageid" render={(props) => (
   //   <Page key={props.match.params.pageid} {...props} />)
   // } />
-  
-  getCurrentVideo = (videos, currentVideoId) => Object.values(videos).filter(video => video.id === currentVideoId)
 
-  addViewCount(video) {
-    this.state.videosRef.child(video.id).set({...video, views: video.views+1})
-  }
+  checkFavourite = (videos, currentVideoId) => (videos[currentVideoId]) && this.setState({isAFavourite: true})
+  getCurrentVideo = (videos, currentVideoId) => Object.values(videos).filter(video => video.id === currentVideoId)
+  addViewCount = (video) => this.state.videosRef.child(video.id).set({...video, views: video.views+1})
 
   addToFavorite = () => {
-    const { usersRef, user } = this.state
-    usersRef.child(user).set({...user})
+    this.setState({ message: '', isAFavouriteLoading: true})
+    const { uid, name, avatar, role, favourites } = this.state.user
+    const { usersRef, currentVideo, isAFavourite, message } = this.state
+    usersRef.child(uid)
+      .set({
+        name, avatar, role,
+        favourites: (isAFavourite ?
+          favourites.filter(item => item !== currentVideo.id) : [...favourites, currentVideo.id])
+      })
+      .then(() => {
+        this.setState({
+          isAFavourite: !isAFavourite,
+          isAFavouriteLoading: false,
+          message: isAFavourite ? "removed from favourites": "added to favourites"
+        })
+      })
+      .catch((err) => {
+        this.setState({
+          isAFavouriteLoading: false,
+          message: err.message
+        })
+
+      })
   }
+  // displayMessages = () => this.state.messages.map((msg, i) => <p key={i}>{msg.message}</p>)
+
+  displayMessage = (message) => setTimeout(() => this.setState({ message: '' }), 1000)
 
   render() {
-    const { user, videos, currentVideo, currentVideoId } = this.state
-
+    const { user, videos, currentVideo, currentVideoId, isAFavourite, isAFavouriteLoading, message } = this.state
+    message && this.displayMessage(message)
     return Object.keys(currentVideo).length === 0 ? <Spinner spinnerLabel="Loading Video..." /> : (
       <React.Fragment>
         <Segment basic>
@@ -68,7 +94,7 @@ class PlayVideo extends React.Component {
 
         <Segment vertical>
           <Grid>
-            <Grid.Row columns={1}>
+            <Grid.Row columns={1} style={{paddingBottom: 0}}>
               <Grid.Column className='player-wrapper'>
                   <ReactPlayer
                     className='react-player'
@@ -81,23 +107,29 @@ class PlayVideo extends React.Component {
 
               </Grid.Column>
             </Grid.Row>
-            <Grid.Row columns={1} >
+            <Grid.Row columns={1} style={{paddingTop: 0}}>
               <Grid.Column >
-              <Card.Content>
-                  <Card.Header >
-                    <Header as='h2' position='left'>
-                      {currentVideo.videoTitle} {" "}
-                      <Icon inverted link name='like' size='tiny'
-                        color='grey' floated='right' onClick={() => this.addToFavorite(currentVideoId)}/>
-                    </Header>
-                  </Card.Header>
-                  <Card.Meta>
-                  <Label as='a' image>
-                    <img src={currentVideo.uploadedBy.avatar} />
-                    {currentVideo.uploadedBy.name}
-                  </Label>
-                  </Card.Meta>
-                </Card.Content>
+                <Segment clearing basic style={{padding: 0, marginBottom:0}}>
+                  <Header as='h3' style={{ fontSize: '1.8em', marginBottom: 0}} floated='left'>
+                    {currentVideo.videoTitle} {" "}
+                    <Icon inverted link name='like' size='tiny'
+                      disabled={isAFavouriteLoading}
+                      color={isAFavourite ? 'pink' : 'grey'}
+                      onClick={() => this.addToFavorite(currentVideoId)} />                  
+                  </Header>
+                  {message && <Header as='h3' floated='right'
+                    style={{
+                      border: `1px solid ${isAFavourite ? 'green': 'red'}`,
+                      color: `${isAFavourite ? 'green': 'red'}`,
+                      padding: '2px'
+                    }}>{message}</Header>}
+                  
+                </Segment>
+                <p>
+                  <Image avatar src={currentVideo.uploadedBy.avatar} />
+                  <b>{currentVideo.uploadedBy.name}</b>
+                  {/* {message && <Label basic floa>{message}</Label>} */}
+                </p>
               </Grid.Column>
             </Grid.Row>
 

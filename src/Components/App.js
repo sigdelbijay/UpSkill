@@ -15,7 +15,8 @@ class App extends React.Component {
       uid: this.props.currentUser.uid,
       name: this.props.currentUser.displayName || this.props.currentUser.name,
       avatar: this.props.currentUser.photoURL || this.props.currentUser.avatar,
-      role: this.props.currentUser.role || ''
+      role: this.props.currentUser.role || '',
+      favourites: this.props.currentUser.favourites || []
     },
     videos: this.props.videos || [],
     videosRef: firebase.database().ref('videos')
@@ -28,8 +29,8 @@ class App extends React.Component {
       firebase.database().ref('users')
       .child(user.uid).once('value').then(snap => snap.val())
       .then(val => {
-        this.setState({ user: { ...user, role: val.role } })
-        this.props.setUser({ ...user, role: val.role })
+        this.setState({ user: { ...user, role: val.role, favourites: val.favourites || [] } })
+        this.props.setUser({ ...user, role: val.role, favourites: val.favourites || [] })
       })
       .catch(err => {
         console.log(err)
