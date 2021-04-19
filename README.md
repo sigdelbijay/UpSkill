@@ -1,6 +1,6 @@
 # Upskill Platform
 
-Upskill is a project in making. We are developing a free platform to upskill people.
+Upskill is a project in making. We are developing a free platform to upskill people. It is available here https://upskill-project.web.app/. Be mindful of the errors, we are in the process of development.
 
 ## Available Scripts
 
