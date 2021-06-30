@@ -2,6 +2,7 @@ import React from 'react'
 import { Grid, Form, Segment, Button, Header, Message, Icon, Loader } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import firebase from '../../firebase'
+import './../App.css'
 
 class Login extends React.Component {
   state = {
@@ -41,27 +42,28 @@ class Login extends React.Component {
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
         <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as="h1" icon color="violet" textAlign="center">
-            <Icon name="puzzle piece" color="violet" />
-            Login to UpSkill
+          <Header as="h1" textAlign="center">
+            <span className="upskill-grey"><small>Login to</small></span><br/>
+            <span className="upskill-logo">UpSkill</span>
           </Header>
-          <Form onSubmit={this.handleSubmit} size="large">
-            <Segment stacked>
-              <Form.Input fluid name="email" icon="mail" iconPosition="left"
-                placeholder="Email Address" value={email} onChange={this.handleChange} type="email" />
-              <Form.Input fluid name="password" icon="lock" iconPosition="left"
-                placeholder="Password" value={password} onChange={this.handleChange} type="password" />
-              <Button disabled={loading} color="violet" fluid size="large">
-                {loading ? <Loader active inline='centered' size="mini"/> : 'Submit'}
-                </Button>
-            </Segment>
-          </Form>
+          <br/>
           {errors.length > 0 && (
             <Message error>
               <h3>Error</h3>
               {this.displayErrors()}
             </Message>
           )}
+          <Form onSubmit={this.handleSubmit} size="large">
+            <Segment stacked>
+              <Form.Input fluid name="email" icon="mail" iconPosition="left"
+                placeholder="Email Address" value={email} onChange={this.handleChange} type="email" />
+              <Form.Input fluid name="password" icon="lock" iconPosition="left"
+                placeholder="Password" value={password} onChange={this.handleChange} type="password" />
+              <Button disabled={loading} color="blue" fluid size="large">
+                {loading ? <Loader active inline='centered' size="mini"/> : 'LOGIN'}
+                </Button>
+            </Segment>
+          </Form>
           <Message>Don't have an account? <Link to="/register">Register</Link></Message>
         </Grid.Column>
       </Grid>

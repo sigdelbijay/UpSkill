@@ -54,3 +54,25 @@ body,
 .comment__image {
   padding: 1em;
 }
+
+.upskill-logo {
+  font-size:26pt;
+  color: #4285F4;
+}
+
+.upskill-grey {
+  color: #737373;
+}
+
+.upskill-blue {
+  color: #4285F4;
+}
+
+.upskill-red {
+  color: #D93025;
+}
+
+.upskill-green {
+  color: #1E8E3E;
+}
+

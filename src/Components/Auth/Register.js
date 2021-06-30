@@ -3,6 +3,7 @@ import { Grid, Form, Segment, Button, Header, Message, Icon, Loader } from 'sema
 import { Link } from 'react-router-dom'
 import firebase from '../../firebase'
 import md5 from 'md5'
+import './../App.css'
 
 class Register extends React.Component {
   state = {
@@ -98,10 +99,17 @@ class Register extends React.Component {
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
         <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as="h1" icon color="orange" textAlign="center">
-            <Icon name="puzzle piece" color="orange" />
-            Register for UpSkill
+          <Header as="h1" textAlign="center">
+            <span className="upskill-grey"><small>Register to</small></span><br/>
+            <span className="upskill-logo">UpSkill</span>
           </Header>
+          <br/>
+          {errors.length > 0 && (
+            <Message error>
+              <h3>Error</h3>
+              {this.displayErrors()}
+            </Message>
+          )}
           <Form onSubmit={this.handleSubmit} size="large">
             <Segment stacked>
               <Form.Input fluid name="username" icon="user" iconPosition="left"
@@ -118,18 +126,12 @@ class Register extends React.Component {
                 <Form.Field label='User' control='input' type='radio' name="role" value='user' checked={role === 'user'} onChange={this.handleChange} />
                 <Form.Field label='Tutor' control='input' type='radio' name="role" value='tutor' checked={role === 'tutor'} onChange={this.handleChange} />
               </Form.Group>
-              <Button disabled={loading} color="orange" fluid size="large">
-                {loading ? <Loader active inline='centered' size="mini"/> : 'Submit'}
+              <Button disabled={loading} color="blue" fluid size="large">
+                {loading ? <Loader active inline='centered' size="mini"/> : 'REGISTER'}
                 </Button>
             </Segment>
           </Form>
-          {errors.length > 0 && (
-            <Message error>
-              <h3>Error</h3>
-              {this.displayErrors()}
-            </Message>
-          )}
-          <Message>Already a user? <Link to="/login">Login</Link></Message>
+          <Message>Already an user? <Link to="/login">Login</Link></Message>
         </Grid.Column>
       </Grid>
     )

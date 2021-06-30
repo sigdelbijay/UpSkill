@@ -4,6 +4,7 @@ import firebase from '../../firebase'
 import AddVideoModal from './AddVideoModal'
 import SearchVideo from './SearchVideo'
 import { Link } from 'react-router-dom'
+import './../App.css'
 
 class UserPanel extends React.Component {
 
@@ -20,8 +21,8 @@ class UserPanel extends React.Component {
       disabled: true
     },
     {
-      key: 'avatar',
-      text: <span>Change Avatar</span>
+      key: 'profile',
+      text: <span>Change Profile</span>
     },
     {
       key: 'signout',
@@ -51,8 +52,7 @@ class UserPanel extends React.Component {
           <Menu.Item header position='left'>
             <Link to="/">
               <Menu.Header as='h2' floated='left'>
-                <Icon name="puzzle piece" color="orange" size='large'/>
-                  UpSkill
+                  <span className="upskill-logo">UpSkill</span>
               </Menu.Header>
             </Link>
           </Menu.Item>
@@ -64,12 +64,12 @@ class UserPanel extends React.Component {
             {user.role === "tutor" ? <Menu.Item onClick={() => alert('going live')}>Go live!</Menu.Item> : ""}
             {user.role === "tutor" ? <Menu.Item onClick={this.openModal}>Add Video</Menu.Item> : ""}
             {user.role === "user" ? <Menu.Item as='a' onClick={showFavouritesFn}>Favourites</Menu.Item> : ""}
+            {user.role === "user" ? <Menu.Item as='a'>Notification</Menu.Item> : ""}
             <Menu.Item>
               <Dropdown direction="left"
                 trigger={
                   <span>
                     <Image src={user.avatar} spaced="right" avatar/>
-                    {user && user.name}
                   </span>
                 }
                 options = {this.dropdownOptions(user)}
